@@ -9,6 +9,44 @@ export default class UserSignIn extends Component {
     errors: [],
   }
 
+  change = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+
+    this.setState(() => {
+      return {
+        [name]: value
+      };
+    });
+  }
+
+  submit = () => {
+    const { context } = this.props;
+    const { username, password } = this.state;
+
+    // signIn is an aysnc function
+    context.actions.signIn(username, password)
+      .then( user => {
+        if (user === null) {
+          this.setState( () => {
+            return { errors: ['Sign-in was unsuccessful']};
+          })
+        } else {
+          // if response status is 201, then redirect a user to /authenticated route
+          this.props.history.push('/authenticated');
+          console.log(`SUCCESS! ${username} is now signed in!`);
+        }
+      })
+      .catch( err => {
+        console.log(err);
+        this.props.history.push('/error');
+      })
+  }
+
+  cancel = () => {
+    this.props.history.push('/');
+  }
+
   render() {
     const {
       username,
@@ -51,22 +89,4 @@ export default class UserSignIn extends Component {
     );
   }
 
-  change = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-
-    this.setState(() => {
-      return {
-        [name]: value
-      };
-    });
-  }
-
-  submit = () => {
-
-  }
-
-  cancel = () => {
-
-  }
 }

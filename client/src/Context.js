@@ -10,9 +10,25 @@ export class Provider extends Component {
     this.data = new Data();
   }
 
+  signIn = async (username, password) => {
+    // Behind the scene of getUser():
+    // get username and password, and convert to Base64-encoded ASCII string,
+    // then create and add an authorization header for the request to backend,
+    // then get the response(this case hashed 'user')
+    const user = await this.data.getUser(username, password);
+    return user;
+  }
+
+  signOut = () => {
+
+  }
+
   render() {
     const value = {
       data: this.data,
+      actions: { // Add the 'actions' property and object
+        signIn: this.signIn
+      }
     };
 
     return (
@@ -22,14 +38,6 @@ export class Provider extends Component {
     );
   }
 
-  
-  signIn = async () => {
-
-  }
-
-  signOut = () => {
-
-  }
 }
 
 export const Consumer = Context.Consumer;

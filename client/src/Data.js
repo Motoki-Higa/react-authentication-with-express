@@ -3,7 +3,7 @@ import config from './config';
 export default class Data {
 
   // helper mothod: this will help to construct a request before send it to fetch()
-  api(path, method = 'GET', body = null) {
+  api(path, method = 'GET', body = null, requiresAuth = false, credentials = null) {
     const url = config.apiBaseUrl + path;
   
     const options = {
@@ -17,11 +17,23 @@ export default class Data {
       options.body = JSON.stringify(body);
     }
 
+    // Check if auth is required
+    if (requiresAuth) {
+      // creates a Base64-encoded ASCII string
+      const encodedCredentials = btoa(`${credentials.username}:${credentials.password}`);
+
+      // Add authorization header to the request
+      options.headers['Authorization'] = `Basic ${encodedCredentials}`;
+    }
+
+    // do the actual request
     return fetch(url, options);
   }
 
-  async getUser() {
-    const response = await this.api(`/users`, 'GET', null);
+  async getUser(username, password) {
+    // Use api() helper method to request and gets response
+    const response = await this.api(`/users`, 'GET', null, true, { username, password });
+
     if (response.status === 200) {
       return response.json().then(data => data);
     }
@@ -34,7 +46,9 @@ export default class Data {
   }
   
   async createUser(user) {
+    // Use api() helper method to request and gets response
     const response = await this.api('/users', 'POST', user);
+  
     if (response.status === 201) {
       return [];
     }
