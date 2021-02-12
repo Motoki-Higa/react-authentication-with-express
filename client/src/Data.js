@@ -1,6 +1,8 @@
 import config from './config';
 
 export default class Data {
+
+  // helper mothod: this will help to construct a request before send it to fetch()
   api(path, method = 'GET', body = null) {
     const url = config.apiBaseUrl + path;
   
