@@ -63,4 +63,4 @@ npm start
 
 ### Authentication flow concept
 
-![Image of concept](./client/public/react-express-authentication-explain.jpg)
+<img src="./client/public/react-express-authentication-explain.jpg" width="100%" />
