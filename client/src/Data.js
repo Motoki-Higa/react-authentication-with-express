@@ -26,7 +26,7 @@ export default class Data {
       options.headers['Authorization'] = `Basic ${encodedCredentials}`;
     }
 
-    // do the actual request
+    // do the actual http request to the backend endpoint in express
     return fetch(url, options);
   }
 

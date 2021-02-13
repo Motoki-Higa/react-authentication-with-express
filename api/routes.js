@@ -4,21 +4,21 @@ const express = require('express');
 const { check, validationResult } = require('express-validator/check');
 const bcryptjs = require('bcryptjs');
 const auth = require('basic-auth');
+// Construct a router instance.
+const router = express.Router();
 
 // This array is used to keep track of user records
 // as they are created.
+// In real case, this would be the database
 const users = [];
 
-/**
- * Middleware to authenticate the request using Basic Authentication.
- * @param {Request} req - The Express Request object.
- * @param {Response} res - The Express Response object.
- * @param {Function} next - The function to call to pass execution to the next middleware.
- */
+
+// ================= Custom middleware =================
+// authenticate the request using Basic Authentication.
 const authenticateUser = (req, res, next) => {
   let message = null;
 
-  // Get the user's credentials from the Authorization header.
+  // Get the user's credentials from the Authorization header, and parse it to 'name' and 'pass' object
   const credentials = auth(req);
 
   if (credentials) {
@@ -26,8 +26,10 @@ const authenticateUser = (req, res, next) => {
     const user = users.find(u => u.username === credentials.name);
 
     if (user) {
-      const authenticated = bcryptjs
-        .compareSync(credentials.pass, user.password);
+      // bcryptjs.compareSync(): second argument hash the user password to compare with already hashed password from db
+      // return true if authenticated
+      const authenticated = bcryptjs.compareSync(credentials.pass, user.password);
+
       if (authenticated) {
         console.log(`Authentication successful for username: ${user.username}`);
 
@@ -50,9 +52,8 @@ const authenticateUser = (req, res, next) => {
     next();
   }
 };
+// =====================================================
 
-// Construct a router instance.
-const router = express.Router();
 
 // Route that returns the current authenticated user.
 router.get('/users', authenticateUser, (req, res) => {
@@ -64,8 +65,10 @@ router.get('/users', authenticateUser, (req, res) => {
   });
 });
 
-// Route that creates a new user.
-router.post('/users', [
+
+// ================= Custom middleware =================
+// validate the request body with express-validator(npm).
+const validateUser = [
   check('name')
     .exists({ checkNull: true, checkFalsy: true })
     .withMessage('Please provide a value for "name"'),
@@ -75,7 +78,12 @@ router.post('/users', [
   check('password')
     .exists({ checkNull: true, checkFalsy: true })
     .withMessage('Please provide a value for "password"'),
-], (req, res) => {
+];
+// =====================================================
+
+
+// Route that creates a new user.
+router.post('/users', validateUser, (req, res) => {
   // Attempt to get the validation result from the Request object.
   const errors = validationResult(req);
 
