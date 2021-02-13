@@ -26,7 +26,7 @@ const authenticateUser = (req, res, next) => {
     const user = users.find(u => u.username === credentials.name);
 
     if (user) {
-      // bcryptjs.compareSync(): second argument hash the user password to compare with already hashed password from db
+      // bcryptjs.compareSync(): second argument hashes the user password to compare with already hashed password from db
       // return true if authenticated
       const authenticated = bcryptjs.compareSync(credentials.pass, user.password);
 

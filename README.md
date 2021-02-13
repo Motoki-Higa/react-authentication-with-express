@@ -45,8 +45,22 @@ npm install
 
 ### Start a project
 
-cd into the installed project folder. Then run below.
+Frontend and Backend need to run separately.
+
+__FE__
+cd into 'client' folder. Then run below.
 
 ```
+npm start
+```
+
+__BE__
+cd into 'api' folder. Then run below.
 
 ```
+npm start
+```
+
+### Authentication flow concept
+
+![Image of concept](./client/public/react-express-authentication-explain.jpg)
