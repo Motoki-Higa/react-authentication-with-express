@@ -16,15 +16,15 @@ import Authenticated from './components/Authenticated';
 // New import
 import withContext from './Context';
 
-// Connect UserSignUp to context
+// Connect each component to context
+const HeaderWithContext = withContext(Header);
 const UserSignUpWithContext = withContext(UserSignUp);
-// Connect UserSignIn to context
 const UserSignInWithContext = withContext(UserSignIn);
 
 export default () => (
   <Router>
     <div>
-      <Header />
+      <HeaderWithContext />
 
       <Switch>
         <Route exact path="/" component={Public} />
