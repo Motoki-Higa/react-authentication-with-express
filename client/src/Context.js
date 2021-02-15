@@ -16,9 +16,9 @@ export class Provider extends Component {
 
   signIn = async (username, password) => {
     // Behind the scene of getUser():
-    // get username and password, and convert to Base64-encoded ASCII string,
-    // then create and add an authorization header for the request to backend,
-    // then get the response(this case hashed 'user')
+      // get username and password, and convert to Base64-encoded ASCII string,
+      // then create and add an authorization header for the request to backend,
+      // then get the response(this case matched 'user')
     const user = await this.data.getUser(username, password);
 
     if (user !== null) {
@@ -39,6 +39,7 @@ export class Provider extends Component {
   render() {
     const { authenticatedUser } = this.state;
   
+    // Below is the context which will be passed to consumer
     const value = {
       authenticatedUser,
       data: this.data,
@@ -48,6 +49,7 @@ export class Provider extends Component {
     };
 
     return (
+      // actual value assigning 
       <Context.Provider value={ value } >
         {this.props.children}
       </Context.Provider>  
