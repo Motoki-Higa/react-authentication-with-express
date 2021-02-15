@@ -10,6 +10,54 @@ export default class UserSignUp extends Component {
     errors: [],
   }
 
+  change = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+
+    this.setState(() => {
+      return {
+        [name]: value
+      };
+    });
+  }
+
+  submit = () => {
+    const { context } = this.props;
+    const {
+      name,
+      username,
+      password,
+    } = this.state;
+
+    // New user payload
+    const user = {
+      name,
+      username,
+      password,
+    }
+
+    context.data.createUser(user)
+      .then( errors => {
+        if (errors.length) {
+          this.setState({ errors });
+        } else {
+          console.log(`${username} is successfully signed up and authenticated!`);
+          context.actions.signIn(username, password)
+            .then(() => {
+              this.props.history.push('/authenticated');
+            })
+        }
+      })
+      .catch( err => { // handle rejected promises
+        console.log(err);
+        this.props.history.push('/error'); // push to history stack
+      });  
+  }
+
+  cancel = () => {
+    this.props.history.push('/');
+  }
+
   render() {
     const {
       name,
@@ -60,47 +108,4 @@ export default class UserSignUp extends Component {
     );
   }
 
-  change = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-
-    this.setState(() => {
-      return {
-        [name]: value
-      };
-    });
-  }
-
-  submit = () => {
-    const { context } = this.props;
-    const {
-      name,
-      username,
-      password,
-    } = this.state;
-
-    // New user payload
-    const user = {
-      name,
-      username,
-      password,
-    }
-
-    context.data.createUser(user)
-      .then( errors => {
-        if (errors.length) {
-          this.setState({ errors });
-        } else {
-          console.log(`${username} is successfully signed up and authenticated!`);
-        }
-      })
-      .catch( err => { // handle rejected promises
-        console.log(err);
-        this.props.history.push('/error'); // push to history stack
-      });  
-  }
-
-  cancel = () => {
-    this.props.history.push('/');
-  }
 }
