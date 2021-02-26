@@ -60,9 +60,6 @@ export default class UserSignUp extends Component {
 
   render() {
     const {
-      name,
-      username,
-      password,
       errors,
     } = this.state;
 
@@ -81,21 +78,18 @@ export default class UserSignUp extends Component {
                   id="name" 
                   name="name" 
                   type="text"
-                  value={name} 
                   onChange={this.change} 
                   placeholder="Name" />
                 <input 
                   id="username" 
                   name="username" 
                   type="text"
-                  value={username} 
                   onChange={this.change} 
                   placeholder="User Name" />
                 <input 
                   id="password" 
                   name="password"
                   type="password"
-                  value={password} 
                   onChange={this.change} 
                   placeholder="Password" />
               </React.Fragment>
