@@ -1,69 +1,54 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import Cookies from 'js-cookie';
-import Data from './Data';
+import Utils from './Utils';
+import axios from 'axios';
 
 const Context = React.createContext(); 
 
-export class Provider extends Component {
+export function Provider(props){
+  const [ authenticatedUser, setAuthenticatedUser ] = useState(Cookies.getJSON('authenticatedUser') || null)
 
-  state = {
-    authenticatedUser: Cookies.getJSON('authenticatedUser') || null
-  };
+  // get utils with object constructor. (Utils comes with 'createUser' and 'getUser' functions)
+  const utils = new Utils();
 
-  constructor() {
-    super();
-    this.data = new Data();
-  }
-
-  signIn = async (username, password) => {
+  const signIn = async (username, password) => {
     // Behind the scene of getUser():
-      // get username and password, and convert to Base64-encoded ASCII string,
-      // then create and add an authorization header for the request to backend,
-      // then get the response(this case matched 'user')
-    const user = await this.data.getUser(username, password);
+    // get username and password, and convert to Base64-encoded ASCII string,
+    // then create and add an authorization header for the request to backend,
+    // then get the response(this case matched 'user')
+    const user = await utils.getUser(username, password);
 
     if (user !== null) {
-      this.setState(() => {
-        return {
-          authenticatedUser: user,
-        };
-      });
-      // Set cookie
-      // 3 args: 
-        // 1: name of the cookie
-        // 2: value to store
-        // 3: additional - in this case, expiration (optional) * 1 is equal to one day
+      setAuthenticatedUser(user)
+      // Set cookie - 3 args: cookie name, value to store, expiration (optional)
       Cookies.set('authenticatedUser', JSON.stringify(user), { expires: 1 });
     }
   
     return user;
   }
 
-  signOut = () => {
-    this.setState({ authenticatedUser: null });
+  const signOut = () => {
+    axios.get('http://localhost:5000/api/signout', { withCredentials: true })
+      .then(result => console.log(result.data.message));
+    setAuthenticatedUser(null);
     Cookies.remove('authenticatedUser');
   }
 
-  render() {
-    const { authenticatedUser } = this.state;
-  
-    // Below is the context which will be passed to consumer
-    const value = {
-      authenticatedUser,
-      data: this.data,
-      actions: { // Add the 'actions' property and object
-        signIn: this.signIn,
-        signOut: this.signOut
-      }
-    };
+  // this object will be passed to Context.provider
+  const value = {
+    authenticatedUser,
+    actions: { // Add the 'actions' property and object
+      signIn: signIn,
+      signOut: signOut
+    }
+  };
 
-    return (
-      // actual value assigning 
-      <Context.Provider value={ value } >
-        {this.props.children}
-      </Context.Provider>  
-    );
-  }
+  return (
+    // actual value assigning 
+    <Context.Provider value={ value } >
+      { props.children }
+    </Context.Provider>  
+  );
 
 }
 

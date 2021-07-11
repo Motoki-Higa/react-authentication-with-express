@@ -1,92 +1,74 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 import Form from './Form';
 
-export default class UserSignIn extends Component {
-  state = {
-    username: '',
-    password: '',
-    errors: [],
+function UserSignIn({ context }){
+  // states
+  const [ user, setUser ] = useState({username: '', password: ''});
+  const [ errors, setErros ] = useState([]);
+
+  let history = useHistory();
+
+  const handleChange = (e) => {
+    const { value, name } = e.target;
+    setUser({...user, [name]: value });
   }
 
-  change = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-
-    this.setState(() => {
-      return {
-        [name]: value
-      };
-    });
-  }
-
-  submit = () => {
-    const { context } = this.props;
-    const { from } = this.props.location.state || { from: { pathname: '/authenticated' } };
-    const { username, password } = this.state;
+  const handleSubmit = () => {
+    setUser({username: '', password: ''}); // for clearing fields
 
     // signIn is an aysnc function
-    context.actions.signIn(username, password)
+    context.actions.signIn(user.username, user.password)
       .then( user => {
         if (user === null) {
-          this.setState( () => {
-            return { errors: ['Sign-in was unsuccessful']};
-          })
+          setErros(['Sign-in was unsuccessful'])
         } else {
-          this.props.history.push(from);
-          console.log(`SUCCESS! ${username} is now signed in!`);
+          history.push('/authenticated');
+          console.log(`SUCCESS! ${ user.username } is now signed in!`);
         }
       })
       .catch( err => {
         console.log(err);
-        this.props.history.push('/error');
+        history.push('/error');
       })
   }
 
-  cancel = () => {
-    this.props.history.push('/');
+  const handleCancel = () => {
+    history.push('/');
   }
 
-  render() {
-    const {
-      username,
-      password,
-      errors,
-    } = this.state;
-
-    return (
-      <div className="bounds">
-        <div className="grid-33 centered signin">
-          <h1>Sign In</h1>
-          <Form 
-            cancel={this.cancel}
-            errors={errors}
-            submit={this.submit}
-            submitButtonText="Sign In"
-            elements={() => (
-              <React.Fragment>
-                <input 
-                  id="username" 
-                  name="username" 
-                  type="text"
-                  value={username} 
-                  onChange={this.change} 
-                  placeholder="User Name" />
-                <input 
-                  id="password" 
-                  name="password"
-                  type="password"
-                  value={password} 
-                  onChange={this.change} 
-                  placeholder="Password" />                
-              </React.Fragment>
-            )} />
-          <p>
-            Don't have a user account? <Link to="/signup">Click here</Link> to sign up!
-          </p>
-        </div>
+  return (
+    <div className="bounds">
+      <div className="grid-33 centered signin">
+        <h1>Sign In</h1>
+        <Form 
+          cancel={ handleCancel }
+          errors={ errors }
+          submit={ handleSubmit }
+          submitButtonText="Sign In"
+          elements={() => (
+            <React.Fragment>
+              <input 
+                id="username" 
+                name="username" 
+                type="text"
+                value={ user.username } 
+                onChange={ handleChange } 
+                placeholder="User Name" />
+              <input 
+                id="password" 
+                name="password"
+                type="password"
+                value={ user.password } 
+                onChange={ handleChange } 
+                placeholder="Password" />                
+            </React.Fragment>
+          )} />
+        <p>Don't have a user account? <Link to="/signup">Click here</Link> to sign up!</p>
       </div>
-    );
-  }
+    </div>
+  );
 
 }
+
+export default UserSignIn;

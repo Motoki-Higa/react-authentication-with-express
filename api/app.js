@@ -2,14 +2,43 @@
 
 const cors = require('cors');
 const express = require('express');
+const { MongoClient } = require('mongodb');
+const session = require('express-session');
 const morgan = require('morgan');
-const routes = require('./routes');
+const routes = require('./src/routes');
+require('dotenv').config();
 
 // Create the Express app.
 const app = express();
 
-// Enable All CORS Requests
-app.use(cors());
+// Enable CORS Requests from the front-end
+const corsOptions = {
+  origin: 'http://localhost:3000', // Your Client, do not write '*'
+  credentials: true,
+};
+app.use(cors(corsOptions));
+
+
+// ================ mongoDB atlas config ==================
+// Connection URL & Database Name
+const uri = process.env.DB_CONNECTION;
+const dbName = process.env.DB_NAME;
+MongoClient.connect(uri, { useUnifiedTopology: true }, async (err, client) => {
+  const db = client.db(dbName);
+  // store db in app.locals gloablly
+  app.locals.db = db;
+});
+// =========================================================
+
+
+// ============ use sessions for tracking logins ===========
+app.use(session({
+  secret: 'cracking the code',
+  resave: true,
+  saveUninitialized: false,
+}));
+// =========================================================
+
 
 // Setup request body JSON parsing.
 app.use(express.json());
