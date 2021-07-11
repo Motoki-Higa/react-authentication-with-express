@@ -2,7 +2,8 @@
 
 Basic Authentication within a React client application, using an Express REST API.
 
-__Note:__ This project is created by following [Treehouse's tutorial](https://teamtreehouse.com/library/react-authentication/introducing-the-authentication-project/what-is-basic-authentication).
+__Note:__ This project originally followed [Treehouse's tutorial](https://teamtreehouse.com/library/react-authentication/introducing-the-authentication-project/what-is-basic-authentication).
+However, the project has some security vulnerabilities around protecting routes in the back-end, I have integrated an express-session.
 
 ## Getting Started
 
@@ -25,6 +26,7 @@ Make sure you have installed all of the following prerequisites on your developm
 
 #### Key packages
 
+- [express-session](https://www.npmjs.com/package/express-session)
 - [express-validator](https://www.npmjs.com/package/express-validator)
 - [bcrypt.js](https://www.npmjs.com/package/bcryptjs)
 - [basic-auth](https://www.npmjs.com/package/basic-auth)
@@ -58,7 +60,7 @@ __BE__
 cd into 'api' folder. Then run below.
 
 ```
-npm start
+npm run start
 ```
 
 ### Authentication flow concept
