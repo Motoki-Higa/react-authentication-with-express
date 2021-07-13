@@ -4,6 +4,7 @@ const cors = require('cors');
 const express = require('express');
 const { MongoClient } = require('mongodb');
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const morgan = require('morgan');
 const routes = require('./src/routes');
 require('dotenv').config();
@@ -32,8 +33,14 @@ MongoClient.connect(uri, { useUnifiedTopology: true }, async (err, client) => {
 
 
 // ============ use sessions for tracking logins ===========
+// if 'store' is not defined, then express-session uses a default session store within express
+// which is slow if multiple users login
 app.use(session({
   secret: 'cracking the code',
+  store: MongoStore.create({
+    mongoUrl: process.env.DB_CONNECTION,
+    dbName: process.env.DB_NAME,
+  }),
   resave: true,
   saveUninitialized: false,
 }));

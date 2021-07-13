@@ -11,7 +11,7 @@ function Dashboard({ context }){
         console.log(result);
       })
       .catch(err => {
-        console.log(err);
+        console.log(err.response.data.message);
       })
   },[])
 

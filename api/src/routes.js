@@ -6,6 +6,7 @@ const { ObjectID } = require('mongodb');
 const router = express.Router();
 
 // middlewares
+const requiresSignin = require('./middlewares/requiresSignin');
 const validateUser = require('./middlewares/userSignUp.validator');
 const authenticateUser = require('./middlewares/userSignIn.authenticate');
 
@@ -22,16 +23,11 @@ router.get('/users', authenticateUser, userSignIn);
 // GET /signout
 router.get('/signout', userSignOut);
 // dashboard
-router.get('/dashboard', async (req, res, next) => {
-  console.log(req.session.userId);
+router.get('/dashboard', requiresSignin, async (req, res, next) => {
   try {
-    if (req.session.userId) {
-      const collection = req.app.locals.db.collection('users');
-      const user = await collection.findOne({ _id: ObjectID(req.session.userId) });
-      res.json({ username: user.username });
-    } else {
-      res.status(401).json({ message: 'Not signed in' });
-    }
+    const collection = req.app.locals.db.collection('users');
+    const user = await collection.findOne({ _id: ObjectID(req.session.userId) });
+    res.json({ username: user.username });
   } catch (err) {
     console.log(err);
   }
