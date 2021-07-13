@@ -24,7 +24,7 @@ const validateUser = [
       const errorMessages = errors.array().map(error => error.msg);
 
       // Return the validation errors to the client.
-      return res.status(400).json({ errors: errorMessages });
+      return res.status(400).json({ message: errorMessages });
     }
 
     next();

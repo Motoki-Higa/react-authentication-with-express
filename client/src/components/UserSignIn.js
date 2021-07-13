@@ -5,8 +5,9 @@ import Form from './Form';
 function UserSignIn({ context }){
   // states
   const [ user, setUser ] = useState({username: '', password: ''});
-  const [ errors, setErros ] = useState([]);
+  const [ errors, setErrors ] = useState('');
 
+  // history hook
   let history = useHistory();
 
   const handleChange = (e) => {
@@ -27,10 +28,7 @@ function UserSignIn({ context }){
           console.log(`SUCCESS! ${ user.username } is now signed in!`);
         }
       })
-      .catch( err => {
-        console.log(err);
-        history.push('/error');
-      })
+      .catch( err => setErrors(err));
   }
 
   const handleCancel = () => {
