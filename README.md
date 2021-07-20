@@ -4,6 +4,7 @@ Basic Authentication within a React client application, using an Express REST AP
 
 __Note:__ This project originally followed [Treehouse's tutorial](https://teamtreehouse.com/library/react-authentication/introducing-the-authentication-project/what-is-basic-authentication).
 However, the project was a bit outdated, and has some security vulnerabilities around protecting routes in the back-end, I have integrated express-session, react hooks and context api to make the code more robust and intuitive.(as of 2021 July)
+
 Followed [User Authentication With Express and Mongo](https://teamtreehouse.com/library/user-authentication-with-express-and-mongo) tutorial to integrate express-session to the project.
 
 ## Getting Started
